@@ -6,7 +6,6 @@ const roleToPages = {
   registered: [
     "Homepage",
     "AllProducts",
-    "AccountHistory",
     "Forum",
     "ViewComplaints",
     "MakeComplaints",
@@ -41,10 +40,11 @@ export default class Menu extends React.Component {
     return (
       <div className={css.container}>
         <div>
-          <strong>{this.props.userRole} menu</strong>
+          <strong>{this.props.user.role} user menu</strong>
           <button onClick={this.props.toggleMenuVisible}>close menu</button>
         </div>
-        {roleToPages[this.props.userRole].map((page) => (
+        <br />
+        {roleToPages[this.props.user.role].map((page) => (
           <div key={page}>
             <button onClick={() => this.props.updatePageView(page)}>
               {page}

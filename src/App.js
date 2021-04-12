@@ -8,7 +8,11 @@ import Login from "./components/Login";
 
 export default class App extends React.Component {
   state = {
-    userRole: "visitor",
+    user: {
+      username: "visitor",
+      userId: "",
+      role: "visitor",
+    },
     pageView: "Homepage",
     loginVisible: false,
     menuVisible: false,
@@ -22,10 +26,19 @@ export default class App extends React.Component {
     this.setState({ loginVisible: !this.state.loginVisible });
   };
 
-  login = (userRole) => {
+  login = (userData) => {
     this.setState({
-      userRole: userRole,
-      loginVisible: false,
+      user: userData,
+    });
+  };
+
+  logout = () => {
+    this.setState({
+      user: {
+        username: "visitor",
+        userId: "",
+        role: "visitor",
+      },
       pageView: "Homepage",
     });
   };
@@ -35,25 +48,27 @@ export default class App extends React.Component {
   };
 
   render() {
-    console.log(this.state.pageView);
     return (
       <div className={css.container}>
         <Header
           toggleLoginVisible={this.toggleLoginVisible}
           toggleMenuVisible={this.toggleMenuVisible}
+          user={this.state.user}
         />
         <Login
           loginVisible={this.state.loginVisible}
           toggleLoginVisible={this.toggleLoginVisible}
           login={this.login}
+          logout={this.logout}
+          user={this.state.user}
         />
         <Menu
           menuVisible={this.state.menuVisible}
           toggleMenuVisible={this.toggleMenuVisible}
-          userRole={this.state.userRole}
+          user={this.state.user}
           updatePageView={this.updatePageView}
         />
-        <Content pageView={this.state.pageView} />
+        <Content pageView={this.state.pageView} user={this.state.user} />
       </div>
     );
   }

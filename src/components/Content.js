@@ -19,27 +19,27 @@ export default class Content extends React.Component {
   render() {
     switch (this.props.pageView) {
       case "Account":
-        return <Account />;
+        return <Account user={this.props.user} />;
       case "AccountHistory":
-        return <AccountHistory />;
+        return <AccountHistory user={this.props.user} />;
       case "AllProducts":
-        return <AllProducts />;
+        return <AllProducts user={this.props.user} />;
       case "Blacklist":
-        return <Blacklist />;
+        return <Blacklist user={this.props.user} />;
       case "DeliveryAuction":
-        return <DeliveryAuction />;
+        return <DeliveryAuction user={this.props.user} />;
       case "DeliveryTracking":
-        return <DeliveryTracking />;
+        return <DeliveryTracking user={this.props.user} />;
       case "Forum":
-        return <Forum />;
+        return <Forum user={this.props.user} />;
       case "Homepage":
-        return <Homepage />;
+        return <Homepage user={this.props.user} />;
       case "MakeComplaints":
-        return <MakeComplaints />;
+        return <MakeComplaints user={this.props.user} />;
       case "Product":
-        return <Product />;
+        return <Product user={this.props.user} />;
       case "ViewComplaints":
-        return <ViewComplaints />;
+        return <ViewComplaints user={this.props.user} />;
       default:
         return null;
     }

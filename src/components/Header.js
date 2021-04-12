@@ -9,7 +9,9 @@ export default class Header extends React.Component {
       <div className={css.container}>
         <button onClick={this.props.toggleMenuVisible}>Menu</button>
         <strong>Life Cyclones Online Computer Store</strong>
-        <button onClick={this.props.toggleLoginVisible}>Login</button>
+        <button onClick={this.props.toggleLoginVisible}>
+          {this.props.user.role === "visitor" ? "Login" : "Logout"}
+        </button>
       </div>
     );
   }
