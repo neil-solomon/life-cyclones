@@ -12,7 +12,7 @@ This is a React app for the front end of the Life Cyclones Online Computer Store
 1. `cd life-cyclones` to navigate into the repository folder.
 1. `npm install` to install dependencies (this may take a few minutes).
 1. `npm start` to run the React development server. This will open `http://localhost:3000/` in your default browser.
-1. View `React_README` to see the README that comes with create-react-app.
+1. View `React_README.md` to see the README that comes with create-react-app.
 
 ### Working with Github
 
@@ -24,4 +24,5 @@ This is a React app for the front end of the Life Cyclones Online Computer Store
    1. `git add .` to stage all files for commit.
    1. `git commit -m "<message>"` to commit changes to your local repository.
    1. `git push origin <branchName>` to push committed changes to the remote repository.
-   1. The branch that you're working on will later be merged with the `main` branch.
+   1. Git may now ask you to login. If the push fails after login, make sure you accepted the invation to collaborate.
+1. The branch that you're working on will later be merged with the `main` branch.
