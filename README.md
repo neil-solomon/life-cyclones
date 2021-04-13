@@ -17,12 +17,12 @@ This is a React app for the front end of the Life Cyclones Online Computer Store
 ### Working with Github
 
 1. Before making changes to the code make sure to pull updates, and then work on a branch other than `main`.
-   1. `git pull` to pull updates from the remote repository.
+   1. `git pull` to pull updates from Github.
    1. `git branch <branchName>` to create a new branch.
    1. `git checkout <branchName>` to switch to a branch.
 1. Save repo after making code changes.
    1. `git add .` to stage all files for commit.
    1. `git commit -m "<message>"` to commit changes to your local repository.
-   1. `git push origin <branchName>` to push committed changes to the remote repository.
-   1. Git may now ask you to login. If the push fails after login, make sure you accepted the invation to collaborate.
+   1. `git push origin <branchName>` to push committed changes to Github.
+   1. Github may now ask you to login. If the push fails after login, make sure you accepted the invation to collaborate.
 1. The branch that you're working on will later be merged with the `main` branch.
