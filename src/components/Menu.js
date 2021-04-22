@@ -2,7 +2,7 @@ import React from "react";
 import css from "./Menu.module.css";
 
 const roleToPages = {
-  visitor: ["Homepage", "AllProducts"],
+  visitor: ["Homepage", "AllProducts", "Forum"],
   registered: [
     "Homepage",
     "AllProducts",
@@ -51,6 +51,19 @@ export default class Menu extends React.Component {
             </button>
           </div>
         ))}
+        <div>&copy; Life Cyclones 2021</div>
+        <div>
+          <div>
+            Icons made by{" "}
+            <a href="https://www.freepik.com" title="Freepik">
+              Freepik
+            </a>{" "}
+            from{" "}
+            <a href="https://www.flaticon.com/" title="Flaticon">
+              www.flaticon.com
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
