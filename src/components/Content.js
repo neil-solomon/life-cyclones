@@ -98,7 +98,9 @@ export default class Content extends React.Component {
 
     return (
       <>
-        <div className={this.state.contentContainerFade}>{content}</div>
+        <div className={css.container + " " + this.state.contentContainerFade}>
+          {content}
+        </div>
         {this.state.overlayVisible && (
           <div
             className={css.overlay + " " + this.state.overlayFade}

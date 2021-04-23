@@ -74,47 +74,72 @@ export default class Menu extends React.Component {
           className={css.container}
           style={{ left: this.props.menuVisible ? 0 : -305 }}
         >
-          {/* <div>
-            <strong>{this.props.user.role} menu</strong>
-          </div> */}
-          {roleToPages[this.props.user.role].map((page, index) => (
-            <div
-              key={page + this.props.menuVisible}
-              onClick={() => this.props.updatePageView(page)}
-              className={css.menuItem}
-              style={{ animationDelay: (0.1 * (index + 2)).toString() + "s" }}
-            >
-              {pageToIcon[page]} {page}
-            </div>
-          ))}
-          <div
-            key={"credits" + this.props.menuVisible}
-            className={css.credits}
-            style={{
-              animationDelay:
-                (
-                  0.1 *
-                  (roleToPages[this.props.user.role].length + 3)
-                ).toString() + "s",
-              marginTop:
-                window.innerHeight -
-                50 * (roleToPages[this.props.user.role].length + 2),
-            }}
-          >
-            <div>&copy; Life Cyclones 2021</div>
-            <div>
-              <div>
-                Icons made by{" "}
-                <a href="https://www.freepik.com" title="Freepik">
-                  Freepik
-                </a>{" "}
-                from{" "}
-                <a href="https://www.flaticon.com/" title="Flaticon">
-                  www.flaticon.com
-                </a>
+          {roleToPages[this.props.user.role] && (
+            <>
+              {roleToPages[this.props.user.role].map((page, index) => (
+                <div
+                  key={page + this.props.menuVisible}
+                  onClick={() => this.props.updatePageView(page)}
+                  className={css.menuItem}
+                  style={{
+                    animationDelay: (0.1 * (index + 1)).toString() + "s",
+                  }}
+                >
+                  {pageToIcon[page]} {page}
+                </div>
+              ))}
+              <div
+                key={"credits" + this.props.menuVisible}
+                className={css.credits}
+                style={{
+                  animationDelay:
+                    (
+                      0.1 *
+                      (roleToPages[this.props.user.role].length + 3)
+                    ).toString() + "s",
+                  marginTop:
+                    window.innerHeight +
+                    35 -
+                    50 * (roleToPages[this.props.user.role].length + 3),
+                }}
+              >
+                <div>&copy; Life Cyclones 2021</div>
+                <div>
+                  <div>
+                    Icons made by{" "}
+                    <a
+                      href="https://www.freepik.com"
+                      title="Freepik"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Freepik
+                    </a>{" "}
+                    from{" "}
+                    <a
+                      href="https://www.flaticon.com/"
+                      title="Flaticon"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      www.flaticon.com
+                    </a>
+                  </div>
+                </div>
+                <div>
+                  Image from{" "}
+                  <a
+                    href="https://www.microcenter.com/"
+                    title="Micro Center"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Micro Center
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     );
