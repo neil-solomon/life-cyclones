@@ -13,7 +13,10 @@ export default class Header extends React.Component {
           onClick={this.props.toggleMenuVisible}
           className={css.menuIcon}
         />
-        <div className={css.fullTitle}>
+        <div
+          className={css.fullTitle}
+          onClick={() => this.props.updatePageView("Homepage")}
+        >
           <div className={css.title}>Life Cyclones</div>
           <TornadoIcon className={css.tornadoIcon} />
           <div className={css.subtitle}>Online Computer Store</div>

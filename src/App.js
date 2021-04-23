@@ -23,7 +23,10 @@ export default class App extends React.Component {
   };
 
   toggleLoginVisible = () => {
-    this.setState({ loginVisible: !this.state.loginVisible });
+    this.setState({
+      loginVisible: !this.state.loginVisible,
+      menuVisible: false,
+    });
   };
 
   login = (userData) => {
@@ -53,6 +56,7 @@ export default class App extends React.Component {
         <Header
           toggleLoginVisible={this.toggleLoginVisible}
           toggleMenuVisible={this.toggleMenuVisible}
+          updatePageView={this.updatePageView}
           user={this.state.user}
         />
         <Login
@@ -68,7 +72,12 @@ export default class App extends React.Component {
           user={this.state.user}
           updatePageView={this.updatePageView}
         />
-        <Content pageView={this.state.pageView} user={this.state.user} />
+        <Content
+          pageView={this.state.pageView}
+          user={this.state.user}
+          menuVisible={this.state.menuVisible}
+          toggleMenuVisible={this.toggleMenuVisible}
+        />
       </div>
     );
   }

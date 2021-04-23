@@ -14,34 +14,98 @@ import Product from "./pages/Product/Product";
 import ViewComplaints from "./pages/ViewComplaints/ViewComplaints";
 
 export default class Content extends React.Component {
-  state = {};
+  constructor(props) {
+    super(props);
+
+    this.pageView_timeout = null;
+    this.overlay_timeout = null;
+
+    this.state = {
+      pageView: "Homepage",
+      contentContainerFade: css.fadeIn,
+      overlayVisible: false,
+      overlayFade: css.fadeIn,
+    };
+  }
+
+  componentWillUnmount = () => {
+    clearTimeout(this.pageView_timeout);
+    clearTimeout(this.overlay_timeout);
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevProps.pageView !== this.props.pageView) {
+      this.setState({ contentContainerFade: css.fadeOut });
+      this.pageView_timeout = setTimeout(() => {
+        this.setState({
+          pageView: this.props.pageView,
+          contentContainerFade: css.fadeIn,
+        });
+      }, 250);
+    }
+
+    if (!prevProps.menuVisible && this.props.menuVisible) {
+      this.setState({ overlayVisible: true, overlayFade: css.fadeIn });
+    } else if (prevProps.menuVisible && !this.props.menuVisible) {
+      this.setState({ overlayFade: css.fadeOut });
+      this.overlay_timeout = setTimeout(() => {
+        this.setState({
+          overlayVisible: false,
+        });
+      }, 250);
+    }
+  };
 
   render() {
-    switch (this.props.pageView) {
+    var content;
+    switch (this.state.pageView) {
       case "Account":
-        return <Account user={this.props.user} />;
-      case "AccountHistory":
-        return <AccountHistory user={this.props.user} />;
-      case "AllProducts":
-        return <AllProducts user={this.props.user} />;
+        content = <Account user={this.props.user} />;
+        break;
+      case "Account History":
+        content = <AccountHistory user={this.props.user} />;
+        break;
+      case "All Products":
+        content = <AllProducts user={this.props.user} />;
+        break;
       case "Blacklist":
-        return <Blacklist user={this.props.user} />;
-      case "DeliveryAuction":
-        return <DeliveryAuction user={this.props.user} />;
-      case "DeliveryTracking":
-        return <DeliveryTracking user={this.props.user} />;
+        content = <Blacklist user={this.props.user} />;
+        break;
+      case "Delivery Auction":
+        content = <DeliveryAuction user={this.props.user} />;
+        break;
+      case "Delivery Tracking":
+        content = <DeliveryTracking user={this.props.user} />;
+        break;
       case "Forum":
-        return <Forum user={this.props.user} />;
+        content = <Forum user={this.props.user} />;
+        break;
       case "Homepage":
-        return <Homepage user={this.props.user} />;
-      case "MakeComplaints":
-        return <MakeComplaints user={this.props.user} />;
+        content = <Homepage user={this.props.user} />;
+        break;
+      case "Make Complaints":
+        content = <MakeComplaints user={this.props.user} />;
+        break;
       case "Product":
-        return <Product user={this.props.user} />;
-      case "ViewComplaints":
-        return <ViewComplaints user={this.props.user} />;
+        content = <Product user={this.props.user} />;
+        break;
+      case "View Complaints":
+        content = <ViewComplaints user={this.props.user} />;
+        break;
       default:
-        return null;
+        content = "ERROR: Content.js can't find the proper page.";
     }
+
+    return (
+      <>
+        <div className={this.state.contentContainerFade}>{content}</div>
+        {this.state.overlayVisible && (
+          <div
+            className={css.overlay + " " + this.state.overlayFade}
+            onClick={this.props.toggleMenuVisible}
+          ></div>
+        )}
+      </>
+    );
   }
 }

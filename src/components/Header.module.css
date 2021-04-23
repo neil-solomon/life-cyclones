@@ -3,6 +3,7 @@
   width: 100vw;
   background-color: #cfd8dc;
   box-shadow: 0px 5px 5px rgb(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s forwards;
 }
 
 .fullTitle {
@@ -71,4 +72,13 @@
 
 .username {
   margin-top: -5px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
