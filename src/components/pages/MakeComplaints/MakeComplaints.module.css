@@ -1,0 +1,20 @@
+.tableContainer {
+  margin-top: 25px;
+}
+
+.table td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: left;
+  vertical-align: top;
+}
+.table tr {
+  /* border: 1px solid rgb(96, 125, 139); */
+}
+
+.submitComplaintButtonContainer {
+  text-align: center;
+  /* margin-top: 25px; */
+}

@@ -43,6 +43,7 @@ const roleToPages = {
     "Forum",
     "Make Complaints",
     "Blacklist",
+    "All Products",
   ],
   delivery: [
     // "Homepage",

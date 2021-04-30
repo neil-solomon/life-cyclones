@@ -33,6 +33,7 @@ export default class App extends React.Component {
   login = (userData) => {
     this.setState({
       user: userData,
+      pageView: "Homepage",
     });
   };
 
