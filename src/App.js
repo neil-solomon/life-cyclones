@@ -16,6 +16,7 @@ export default class App extends React.Component {
     pageView: "Homepage",
     loginVisible: false,
     menuVisible: false,
+    productPage_product_id: "",
   };
 
   toggleMenuVisible = () => {
@@ -50,6 +51,11 @@ export default class App extends React.Component {
     this.setState({ pageView: pageView, menuVisible: false });
   };
 
+  goToProductPage = (product_id) => {
+    this.setState({ productPage_product_id: product_id });
+    this.updatePageView("Product");
+  };
+
   render() {
     return (
       <div className={css.container}>
@@ -77,6 +83,8 @@ export default class App extends React.Component {
           user={this.state.user}
           menuVisible={this.state.menuVisible}
           toggleMenuVisible={this.toggleMenuVisible}
+          goToProductPage={this.goToProductPage}
+          productPage_product_id={this.state.productPage_product_id}
         />
       </div>
     );

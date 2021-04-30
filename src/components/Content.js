@@ -1,3 +1,7 @@
+/*
+This component is the container for all of the pages of the app.
+It receives the page as props and renders the proper component, while handling transitions.
+*/
 import React from "react";
 import css from "./Content.module.css";
 
@@ -66,7 +70,12 @@ export default class Content extends React.Component {
         content = <AccountHistory user={this.props.user} />;
         break;
       case "All Products":
-        content = <AllProducts user={this.props.user} />;
+        content = (
+          <AllProducts
+            user={this.props.user}
+            goToProductPage={this.props.goToProductPage}
+          />
+        );
         break;
       case "Blacklist":
         content = <Blacklist user={this.props.user} />;
@@ -81,13 +90,23 @@ export default class Content extends React.Component {
         content = <Forum user={this.props.user} />;
         break;
       case "Homepage":
-        content = <Homepage user={this.props.user} />;
+        content = (
+          <Homepage
+            user={this.props.user}
+            goToProductPage={this.props.goToProductPage}
+          />
+        );
         break;
       case "Make Complaints":
         content = <MakeComplaints user={this.props.user} />;
         break;
       case "Product":
-        content = <Product user={this.props.user} />;
+        content = (
+          <Product
+            user={this.props.user}
+            product_id={this.props.productPage_product_id}
+          />
+        );
         break;
       case "View Complaints":
         content = <ViewComplaints user={this.props.user} />;

@@ -1,3 +1,7 @@
+/*
+This component is a sidebar which contains the navigation elements for the app.
+*/
+
 import React from "react";
 import css from "./Menu.module.css";
 import {

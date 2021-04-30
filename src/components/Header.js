@@ -1,3 +1,7 @@
+/*
+This component is the sticky header for the app.
+*/
+
 import React from "react";
 import css from "./Header.module.css";
 import { ReactComponent as TornadoIcon } from "../icons/tornado.svg";

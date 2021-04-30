@@ -1,3 +1,7 @@
+/*
+This component uses Antd Modal to login, logout, and signup a user.
+*/
+
 import React from "react";
 import css from "./Login.module.css";
 import { Modal } from "antd";
@@ -57,36 +61,47 @@ export default class Login extends React.Component {
   render() {
     return (
       <Modal
-        title={this.props.user.role === "visitor" ? "Login" : "Logout"}
+        title={this.props.user.role === "visitor" ? "Login / Signup" : "Logout"}
         visible={this.props.loginVisible}
         onOk={
           this.props.user.role === "visitor"
             ? this.handleLogin
             : this.handleLogout
         }
-        okText={this.props.user.role === "visitor" ? "Login" : "Logout"}
+        okText={
+          this.props.user.role === "visitor" ? "Login / Signup" : "Logout"
+        }
         onCancel={this.props.toggleLoginVisible}
       >
         <div className={css.container}>
           {this.props.user.role === "visitor" && (
-            <div>
-              Username:{" "}
-              <input
-                type="text"
-                onChange={this.updateUsernameInput}
-                value={this.state.usernameInput}
-              />
-              <br />
-              Password:{" "}
-              <input
-                type="password"
-                onChange={this.updatePasswordInput}
-                value={this.state.passwordInput}
-              />
-            </div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>Username:</td>
+                  <td>
+                    <input
+                      type="text"
+                      onChange={this.updateUsernameInput}
+                      value={this.state.usernameInput}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Password:</td>
+                  <td>
+                    <input
+                      type="password"
+                      onChange={this.updatePasswordInput}
+                      value={this.state.passwordInput}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           )}
           {this.props.user.role !== "visitor" && (
-            <div>username: {this.props.user.username}</div>
+            <div>Welcome back, {this.props.user.username}!</div>
           )}
         </div>
       </Modal>

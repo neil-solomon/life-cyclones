@@ -1,5 +1,12 @@
+/**
+  Homepage
+  
+  Includes a list of the 3 most popular products and a list of 3 products
+  chosen by the manager.
+ */
 import React from "react";
 import css from "./Homepage.module.css";
+import ProductSmall from "../../ProductSmall";
 
 import cpu from "../../../mockProducts/cpu.png";
 import flashDrive from "../../../mockProducts/flashDrive.png";
@@ -16,9 +23,24 @@ export default class Homepage extends React.Component {
      * Make API Call
      */
     return [
-      { name: "cpu", imageSrc: cpu },
-      { name: "flashDrive", imageSrc: flashDrive },
-      { name: "gpu", imageSrc: gpu },
+      {
+        name: "DDRAM",
+        price: 219.99,
+        company: "AMD",
+        product_id: "111",
+      },
+      {
+        name: "Chromebook",
+        price: 200,
+        company: "Apple",
+        product_id: "555",
+      },
+      {
+        name: "Life Cyclones T-shirt",
+        price: 19.99,
+        company: "Life Cyclones",
+        product_id: "666",
+      },
     ];
   };
 
@@ -27,15 +49,31 @@ export default class Homepage extends React.Component {
      * Make API Call
      */
     return [
-      { name: "laptop", imageSrc: laptop },
-      { name: "mac", imageSrc: mac },
-      { name: "sdCard", imageSrc: sdCard },
+      {
+        name: "GPU",
+        price: 21.99,
+        company: "AMD",
+        product_id: "222",
+      },
+      {
+        name: "Mac Book",
+        price: 2000,
+        company: "Apple",
+        product_id: "333",
+      },
+      {
+        name: "Hard Drive",
+        price: 19.99,
+        company: "Samsung",
+        product_id: "444",
+      },
     ];
   };
 
   render() {
     return (
       <div>
+        <div className="pageHeader">Homepage</div>
         <div className={css.greeting}>
           Hello {this.props.user.username}! Welcome to Life Cyclones Online
           Computer Store.
@@ -43,41 +81,27 @@ export default class Homepage extends React.Component {
         <div className={css.productList}>
           <div className={css.subtitle}>Best Selling</div>
           {this.getBestSelling().map((product) => (
-            <div className={css.imageContainer} key={product.name}>
-              <img
-                src={product.imageSrc}
-                alt="productImage"
-                className={css.image}
-              />
-            </div>
+            <ProductSmall
+              name={product.name}
+              price={product.price}
+              company={product.company}
+              product_id={product.product_id}
+              goToProductPage={this.props.goToProductPage}
+            />
           ))}
         </div>
         <div className={css.productList}>
           <div className={css.subtitle}>Managers Picks</div>
           {this.getManagersPicks().map((product) => (
-            <div className={css.imageContainer} key={product.name}>
-              <img
-                src={product.imageSrc}
-                alt="productImage"
-                className={css.image}
-              />
-            </div>
+            <ProductSmall
+              name={product.name}
+              price={product.price}
+              company={product.company}
+              product_id={product.product_id}
+              goToProductPage={this.props.goToProductPage}
+            />
           ))}
         </div>
-        {/* <h1>Homepage</h1>
-        <h2>
-          Hello {this.props.user.username}! Your role is {this.props.user.role}.
-        </h2>
-        {this.props.user.role === "visitor" && (
-          <h3>
-            The homepage and menu render differently according to the type of
-            user that is logged in. To test this click Login, enter a username,
-            then click the Login button. For username use "registered",
-            "manager", "clerk", "delivery", or "computer".
-          </h3>
-        )}
-        Includes a list of the 3 most popular products and a list of 3 products
-        chosen by the manager. */}
       </div>
     );
   }

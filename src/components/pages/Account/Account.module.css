@@ -1,0 +1,17 @@
+.accountBalance {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.accountBalanceAmount {
+  color: rgb(124, 77, 255);
+}
+
+.saveInfoButton {
+  /* font-size: 1.25em; */
+}
+
+.saveInfoButtonContainer {
+  text-align: center;
+  margin-top: 5px;
+}
