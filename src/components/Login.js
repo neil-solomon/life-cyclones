@@ -8,7 +8,7 @@ import { Modal } from "antd";
 
 export default class Login extends React.Component {
   state = {
-    usernameInput: "",
+    emailInput: "",
     passwordInput: "",
   };
 
@@ -30,60 +30,72 @@ export default class Login extends React.Component {
     this.setState({ passwordInput: event.target.value });
   };
 
-  updateUsernameInput = (event) => {
-    this.setState({ usernameInput: event.target.value });
+  updateEmailInput = (event) => {
+    this.setState({ emailInput: event.target.value });
   };
 
   handleLogin = () => {
-    const userData = this.getUserData(
-      this.state.usernameInput,
-      this.state.passwordInput
-    );
-    this.props.login(userData);
-    this.setState({ usernameInput: "", passwordInput: "" });
-  };
-
-  getUserData = () => {
-    /**
-     * Make API call
-     */
-    return {
-      username: this.state.usernameInput,
-      userId: "userId",
-      role: this.state.usernameInput,
-    };
+    this.props.login({
+      email: this.state.emailInput,
+      password: this.state.passwordInput,
+    });
+    this.setState({ emailInput: "", passwordInput: "" });
   };
 
   handleLogout = () => {
     this.props.logout();
   };
 
+  handleSignUp = () => {
+    this.props.signUp({
+      email: this.state.emailInput,
+      password: this.state.passwordInput,
+    });
+  };
+
   render() {
     return (
       <Modal
-        title={this.props.user.role === "visitor" ? "Login / Signup" : "Logout"}
+        title={"Account"}
         visible={this.props.loginVisible}
-        onOk={
-          this.props.user.role === "visitor"
-            ? this.handleLogin
-            : this.handleLogout
-        }
-        okText={
-          this.props.user.role === "visitor" ? "Login / Signup" : "Logout"
-        }
         onCancel={this.props.toggleLoginVisible}
+        footer={
+          <div>
+            {this.props.user.role === "visitor" && (
+              <>
+                <button
+                  className="button"
+                  onClick={this.handleLogin}
+                  style={{ marginRight: 15 }}
+                >
+                  Login
+                </button>
+                <button className="button" onClick={this.handleSignUp}>
+                  SignUp
+                </button>
+              </>
+            )}
+            {this.props.user.role !== "visitor" && (
+              <>
+                <button className="button" onClick={this.handleLogout}>
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        }
       >
         <div className={css.container}>
           {this.props.user.role === "visitor" && (
             <table>
               <tbody>
                 <tr>
-                  <td>Username:</td>
+                  <td>Email:</td>
                   <td>
                     <input
                       type="text"
-                      onChange={this.updateUsernameInput}
-                      value={this.state.usernameInput}
+                      onChange={this.updateEmailInput}
+                      value={this.state.emailInput}
                     />
                   </td>
                 </tr>
@@ -101,7 +113,10 @@ export default class Login extends React.Component {
             </table>
           )}
           {this.props.user.role !== "visitor" && (
-            <div>Welcome back, {this.props.user.username}!</div>
+            <div>
+              Welcome back, {this.props.user.username}! <br /> Your role is{" "}
+              {this.props.user.role}.
+            </div>
           )}
         </div>
       </Modal>

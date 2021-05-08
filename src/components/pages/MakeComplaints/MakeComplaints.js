@@ -10,6 +10,7 @@ import React from "react";
 import css from "./MakeComplaints.module.css";
 
 const userRoleToUserComplain = {
+  visitor: [],
   registered: ["registered user", "delivery company", "store clerk"],
   clerk: ["registered user", "delivery company"],
   manager: ["registered user", "store clerk"],

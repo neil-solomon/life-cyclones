@@ -1,0 +1,19 @@
+Computer
+    ir@lenovo.com
+    Password6
+
+Delivery
+    delivery_company1@expr.com
+    Password2
+
+Registered_User
+    Houdini@gmail.com
+    Houdini123
+
+Store_Clerk
+    ethantu@gmail.com
+    Password123
+
+Store_Manager
+    tom56@LifeCyclones.com
+    password123

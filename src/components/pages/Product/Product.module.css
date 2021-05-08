@@ -21,7 +21,8 @@
 }
 
 .rateProduct {
-  margin-top: 25px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .star {
@@ -34,4 +35,15 @@
 
 .addToHomepage {
   margin-top: 25px;
+}
+
+.image {
+  height: 300px;
+  width: auto;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 50px;
 }

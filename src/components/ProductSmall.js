@@ -14,9 +14,14 @@ export default class Product extends React.Component {
         className={css.container}
         onClick={() => this.props.goToProductPage(this.props.product_id)}
       >
-        <div className={css.name}>{this.props.name}</div>
-        <div className={css.seller}>Sold By: {this.props.company}</div>
-        <div className={css.price}>${this.props.price}</div>
+        <div className={css.productInfo}>
+          <div className={css.name}>{this.props.name}</div>
+          <div className={css.seller}>Sold By: {this.props.company}</div>
+          <div className={css.price}>${this.props.price}</div>
+        </div>
+        <div className={css.productImageContainer}>
+          <img src={this.props.imageSrc} className={css.image} />
+        </div>
       </div>
     );
   }

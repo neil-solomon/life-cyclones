@@ -26,3 +26,18 @@
 
 .seller {
 }
+
+.productInfo {
+  display: inline-block;
+  width: 400px;
+}
+
+.productImageContainer {
+  display: inline-block;
+}
+
+.image {
+  width: 200px;
+  height: 200px;
+  margin-left: calc(90vw - 650px);
+}
