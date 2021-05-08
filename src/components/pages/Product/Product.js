@@ -11,6 +11,7 @@ Manager can select the product for inclusion on the Homepage.
 import React from "react";
 import css from "./Product.module.css";
 import { StarOutlined, StarFilled } from "@ant-design/icons";
+import { notification } from "antd";
 import axios from "axios";
 
 export default class Product extends React.Component {
@@ -157,6 +158,42 @@ export default class Product extends React.Component {
     this.setState({ enteredRating: rating });
   };
 
+  handlePurchase = () => {
+    /**
+     * Check if user has valid payment
+     */
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Payment")
+      .then((response) => {
+        console.log("handlePurchase", response.data.results);
+        var validPayment = false;
+        for (const purchase of response.data.results) {
+          if (
+            purchase.user.objectId === this.props.user.objectId &&
+            purchase.credit_card_num !== ""
+          ) {
+            validPayment = true;
+            break;
+          }
+        }
+        if (validPayment) {
+          this.purchaseProduct();
+        } else {
+          notification.error({
+            message: "Error",
+            description: "Payment method is not valid.",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("handlePurchase", error);
+      });
+  };
+
   purchaseProduct = () => {
     const data = {
       product: {
@@ -179,7 +216,10 @@ export default class Product extends React.Component {
       .post("https://parseapi.back4app.com/classes/Purchase", data)
       .then((response) => {
         console.log("purchaseProduct", response.data.results);
-        this.getComments();
+        notification.open({
+          message: "Purchased",
+          description: this.state.product.name + " has been purchased.",
+        });
       })
       .catch((error) => {
         console.log("purchaseProduct", error);
@@ -210,7 +250,7 @@ export default class Product extends React.Component {
         </div>
         {this.props.user.role === "registered" && (
           <div>
-            <button className="button" onClick={this.purchaseProduct}>
+            <button className="button" onClick={this.handlePurchase}>
               <div style={{ fontSize: "1.25em" }}>BUY NOW</div>
             </button>
           </div>
