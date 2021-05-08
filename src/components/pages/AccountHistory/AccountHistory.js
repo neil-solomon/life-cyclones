@@ -9,14 +9,13 @@ complaints, and purchases.
 import React from "react";
 import css from "./AccountHistory.module.css";
 import { StarFilled } from "@ant-design/icons";
+import axios from "axios";
+import _ from "lodash";
 
 const userDataKeyToHeader = {
   purchases: "Purchases",
-  productComments: "Product Comments",
-  productRatings: "Product Ratings",
-  productComplaints: "Product Complaints",
-  clerkComplaints: "Clerk Complaints",
-  deliveryComplaints: "Delivery Complaints",
+  productReviews: "Product Reviews",
+  complaints: "Complaints Made",
 };
 
 export default class AccountHistory extends React.Component {
@@ -25,7 +24,124 @@ export default class AccountHistory extends React.Component {
   };
 
   componentDidMount = () => {
-    this.getUserData();
+    this.getAllUserData();
+  };
+
+  getAllUserData = () => {
+    this.getPurchases();
+    this.getProductReviews();
+    this.getComplaints();
+  };
+
+  getPurchases = () => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Purchase")
+      .then((response) => {
+        console.log("getPurchases", response.data.results);
+        var purchases = [];
+        for (const purchase of response.data.results) {
+          if (purchase.user.objectId === this.props.user.objectId) {
+            purchases.push({
+              productObjectId: purchase.product.objectId,
+              dateTime: purchase.createdAt,
+            });
+          }
+        }
+        var userData = _.cloneDeep(this.state.userData);
+        if (userData === null) {
+          userData = {};
+        }
+        userData.purchases = purchases;
+        this.setState({ userData });
+      })
+      .catch((error) => {
+        console.log("getPurchases", error);
+      });
+  };
+
+  getProductReviews = () => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Product_Comments")
+      .then((response) => {
+        console.log("getProductReviews", response.data.results);
+        var productReviews = [];
+        for (const review of response.data.results) {
+          if (review.user.objectId === this.props.user.objectId) {
+            productReviews.push({
+              productObjectId: review.product.objectId,
+              dateTime: review.updatedAt,
+              rating: review.stars,
+              message: review.message,
+            });
+          }
+        }
+        var userData = _.cloneDeep(this.state.userData);
+        if (userData === null) {
+          userData = {};
+        }
+        userData.productReviews = productReviews;
+        this.setState({ userData });
+      })
+      .catch((error) => {
+        console.log("getProductReviews", error);
+      });
+  };
+
+  getComplaints = () => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Complaints")
+      .then((response) => {
+        console.log("getComplaints", response.data.results);
+        var complaints = [];
+        for (const complaint of response.data.results) {
+          if (complaint.user.objectId === this.props.user.objectId) {
+            complaints.push({
+              dateTime: complaint.updatedAt,
+              message: complaint.message,
+            });
+            switch (complaint.from_against.split("_")[1]) {
+              case "manager":
+                complaints[complaints.length - 1].against =
+                  "manager - " + complaint.manager.objectId;
+                break;
+              case "storeClerk":
+                complaints[complaints.length - 1].against =
+                  "store clerk - " + complaint.store_clerk.objectId;
+                break;
+              case "computerStore":
+                complaints[complaints.length - 1].against =
+                  "computer store - " + complaint.computer_store.objectId;
+                break;
+              default:
+                break;
+            }
+          }
+        }
+        if (complaints.length === 0) {
+          return;
+        }
+        var userData = _.cloneDeep(this.state.userData);
+        if (userData === null) {
+          userData = {};
+        }
+        userData.complaints = complaints;
+        this.setState({ userData });
+      })
+      .catch((error) => {
+        console.log("getComplaints", error);
+      });
   };
 
   getUserData = () => {
@@ -89,7 +205,7 @@ export default class AccountHistory extends React.Component {
   };
 
   render() {
-    if (!this.state.userData) {
+    if (this.state.userData === null) {
       return <div>Loading...</div>;
     }
 

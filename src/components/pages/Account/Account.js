@@ -42,6 +42,7 @@ export default class Account extends React.Component {
             userData.name.firstName = purchase.first_name;
             userData.name.lastName = purchase.last_name;
             this.setState({ userData, userPaymentObjectId: purchase.objectId });
+            break;
           }
         }
       })
