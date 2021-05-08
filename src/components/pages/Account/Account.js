@@ -7,11 +7,18 @@ Registered user can view account info such as credit card, account balance, and 
 import React from "react";
 import css from "./Account.module.css";
 import _ from "lodash";
+import axios from "axios";
 
 export default class Account extends React.Component {
   state = {
-    userData: null,
+    userData: {
+      creditCard: { number: "", expiry: "", code: "" },
+      deliveryAddress: { address: "", zip: "" },
+      name: { firstName: "", lastName: "" },
+      accountBalance: 0,
+    },
     depositAmount: 0,
+    userPaymentObjectId: "",
   };
 
   componentDidMount = () => {
@@ -19,23 +26,40 @@ export default class Account extends React.Component {
   };
 
   getUserData = () => {
-    /**
-     * Make API call
-     */
-    const userData = {
-      creditCard: {
-        number: "0102030405060708",
-        expiry: "01/23",
-        code: "123",
-      },
-      deliveryAddress: {
-        address: "123 life cyclone ave",
-        zip: "12345",
-      },
-      accountBalance: 3000,
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
     };
+    axios
+      .get("https://parseapi.back4app.com/classes/Payment")
+      .then((response) => {
+        console.log("getUserData", response.data.results);
+        for (const purchase of response.data.results) {
+          if (purchase.user.objectId === this.props.user.objectId) {
+            var userData = _.cloneDeep(this.state.userData);
+            userData.creditCard.number = purchase.credit_card_num;
+            userData.deliveryAddress.address = purchase.delivery_address;
+            userData.name.firstName = purchase.first_name;
+            userData.name.lastName = purchase.last_name;
+            this.setState({ userData, userPaymentObjectId: purchase.objectId });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("getUserData", error);
+      });
+  };
 
-    this.setState({ userData: userData });
+  updateFirstName = (event) => {
+    var userData = _.cloneDeep(this.state.userData);
+    userData.name.firstName = event.target.value;
+    this.setState({ userData });
+  };
+
+  updateLastName = (event) => {
+    var userData = _.cloneDeep(this.state.userData);
+    userData.name.lastName = event.target.value;
+    this.setState({ userData });
   };
 
   updateCreditCardNumber = (event) => {
@@ -81,10 +105,46 @@ export default class Account extends React.Component {
   };
 
   saveInfo = () => {
-    /**
-     * Make API call
-     */
-    console.log("saveInfo", this.state.userData);
+    const data = {
+      delivery_address: this.state.userData.deliveryAddress.address,
+      credit_card_num: this.state.userData.creditCard.number,
+      first_name: this.state.userData.name.firstName,
+      last_name: this.state.userData.name.lastName,
+      user: {
+        __type: "Pointer",
+        className: "Registered_User",
+        objectId: this.props.user.objectId,
+      },
+    };
+
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+
+    if (this.state.userPaymentObjectId === "") {
+      axios
+        .post("https://parseapi.back4app.com/classes/Payment", data)
+        .then((response) => {
+          console.log("saveInfo post", response.data);
+        })
+        .catch((error) => {
+          console.log("saveInfo post", error);
+        });
+    } else {
+      axios
+        .put(
+          "https://parseapi.back4app.com/classes/Payment/" +
+            this.state.userPaymentObjectId,
+          data
+        )
+        .then((response) => {
+          console.log("saveInfo put", response.data);
+        })
+        .catch((error) => {
+          console.log("saveInfo put", error);
+        });
+    }
   };
 
   render() {
@@ -98,6 +158,35 @@ export default class Account extends React.Component {
         <table align="center">
           <tbody>
             <tr>
+              <td>Name</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>first name:</td>
+              <td>
+                <input
+                  type="text"
+                  onChange={this.updateFirstName}
+                  value={this.state.userData.name.firstName}
+                  style={{ width: 150 }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>last name:</td>
+              <td>
+                <input
+                  type="text"
+                  onChange={this.updateLastName}
+                  value={this.state.userData.name.lastName}
+                  style={{ width: 150 }}
+                />
+              </td>
+            </tr>
+            <tr>
               <td>Credit Card</td>
               <td></td>
               <td></td>
@@ -108,13 +197,13 @@ export default class Account extends React.Component {
               <td>
                 <input
                   type="text"
-                  maxLength={16}
                   onChange={this.updateCreditCardNumber}
                   value={this.state.userData.creditCard.number}
+                  style={{ width: 150 }}
                 />
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <td></td>
               <td>cc expiry:</td>
               <td>
@@ -137,7 +226,7 @@ export default class Account extends React.Component {
                   value={this.state.userData.creditCard.code}
                 />
               </td>
-            </tr>
+            </tr> */}
             <tr>
               <td>Delivery Address</td>
               <td></td>
@@ -151,10 +240,11 @@ export default class Account extends React.Component {
                   type="text"
                   onChange={this.updateDeliveryAddressAddress}
                   value={this.state.userData.deliveryAddress.address}
+                  style={{ width: 300 }}
                 />
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <td></td>
               <td>zip:</td>
               <td>
@@ -165,7 +255,7 @@ export default class Account extends React.Component {
                   value={this.state.userData.deliveryAddress.zip}
                 />
               </td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
         <div className={css.saveInfoButtonContainer}>
