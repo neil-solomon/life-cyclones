@@ -7,11 +7,12 @@ delivery, or computer company
 
 import React from "react";
 import css from "./Blacklist.module.css";
+import axios from "axios";
 
 export default class Blacklist extends React.Component {
   state = {
     blacklist: [],
-    username: "",
+    email: "",
     reason: "",
   };
 
@@ -20,36 +21,46 @@ export default class Blacklist extends React.Component {
   };
 
   getBlackList = () => {
-    /**
-     * Make API call
-     */
-    const blacklist = [
-      {
-        username: "user1",
-        message: "Complained too much.",
-      },
-      {
-        username: "user9",
-        message: "Used inappropriate language in the forum.",
-      },
-      {
-        username: "user25",
-        message: "Lied when complaining about a clerk.",
-      },
-    ];
-
-    this.setState({ blacklist: blacklist });
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Avoid_Emails")
+      .then((response) => {
+        console.log("getBlackList", response.data.results);
+        const blacklist = response.data.results.map((result) => {
+          return {
+            email: result.Email,
+            message: result.Manager_Comments,
+            objectId: result.objectId,
+          };
+        });
+        this.setState({ blacklist: blacklist });
+      })
+      .catch((error) => {
+        console.log("getBlackList", error);
+      });
   };
 
-  removeFromBlacklist = (username, indexInBlacklist) => {
-    /**
-     * Make API call
-     */
-    console.log("removeFromBlacklist", username);
+  removeFromBlacklist = (objectId) => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .delete("https://parseapi.back4app.com/classes/Avoid_Emails/" + objectId)
+      .then((response) => {
+        console.log("removeFromBlacklist", response.data);
+        this.getBlackList();
+      })
+      .catch((error) => {
+        console.log("removeFromBlacklist", error);
+      });
   };
 
-  updateUsername = (event) => {
-    this.setState({ username: event.target.value });
+  updateEmail = (event) => {
+    this.setState({ email: event.target.value });
   };
 
   updateReason = (event) => {
@@ -57,11 +68,25 @@ export default class Blacklist extends React.Component {
   };
 
   addToBlackList = () => {
-    /**
-     * Make API call
-     */
-    console.log("addToBlackList", this.state.username, this.state.reason);
-    this.setState({ username: "", reason: "" });
+    const data = {
+      Email: this.state.email,
+      Manager_Comments: this.state.reason,
+    };
+
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .post("https://parseapi.back4app.com/classes/Avoid_Emails", data)
+      .then((response) => {
+        console.log("addToBlackList", response.data);
+        this.setState({ email: "", reason: "" });
+        this.getBlackList();
+      })
+      .catch((error) => {
+        console.log("addToBlackList", error);
+      });
   };
 
   render() {
@@ -73,7 +98,7 @@ export default class Blacklist extends React.Component {
             <tbody>
               <tr>
                 <td>
-                  <strong>User</strong>
+                  <strong>Email</strong>
                 </td>
                 <td>
                   <strong>Offense</strong>
@@ -82,16 +107,14 @@ export default class Blacklist extends React.Component {
                   <strong>Remove From Blacklist</strong>
                 </td>
               </tr>
-              {this.state.blacklist.map((user, index) => (
-                <tr key={user.username}>
-                  <td>{user.username}</td>
-                  <td>{user.message}</td>
+              {this.state.blacklist.map((email, index) => (
+                <tr key={email.objectId}>
+                  <td>{email.email}</td>
+                  <td>{email.message}</td>
                   <td>
                     <button
                       className="button"
-                      onClick={() =>
-                        this.removeFromBlacklist(user.username, index)
-                      }
+                      onClick={() => this.removeFromBlacklist(email.objectId)}
                     >
                       Remove
                     </button>
@@ -103,17 +126,14 @@ export default class Blacklist extends React.Component {
         </div>
         <div className={css.addToBlackList}>
           <div>
-            <strong>Add User To Blacklist</strong>
+            <strong>Add Email To Blacklist</strong>
           </div>
           <table align="center" className={css.table}>
             <tbody>
               <tr>
-                <td>Username:</td>
+                <td>Email:</td>
                 <td>
-                  <input
-                    value={this.state.username}
-                    onChange={this.updateUsername}
-                  />
+                  <input value={this.state.email} onChange={this.updateEmail} />
                 </td>
               </tr>
               <tr>
