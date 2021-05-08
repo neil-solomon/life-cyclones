@@ -9,6 +9,7 @@ Store manager can view and post to the forum, and delete other users posts.
 
 import React from "react";
 import css from "./Forum.module.css";
+import axios from "axios";
 
 export default class Forum extends React.Component {
   constructor(props) {
@@ -26,57 +27,40 @@ export default class Forum extends React.Component {
     this.getPosts();
   };
 
+  scrollPosts = () => {
+    var element = document.getElementById("forumPostsBox");
+    if (!element) return;
+    element.scrollTop = 1000000000000;
+  };
+
   getPosts = () => {
-    /**
-     * Make API call
-     */
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Forum_Post")
+      .then((response) => {
+        console.log("getPosts", response.data.results);
+        var posts = response.data.results.map((post) => ({
+          objectId: post.objectId,
+          message: post.Message,
+          user: post.User,
+          userObjectId: post.User_id,
+          dateTime: post.updatedAt,
+        }));
+        posts.sort((a, b) => {
+          if (a.dateTime > b.dateTime) return 1;
+          if (a.dateTime < b.dateTime) return -1;
+          return 0;
+        });
 
-    const posts = [
-      {
-        user: "user1",
-        message: "Can anyone help me find a gpu?",
-        dateTime: "2020-05-17_05:39",
-        post_id: "111",
-      },
-      {
-        user: "user2",
-        message: "You can get a gpu on the All Products page.",
-        dateTime: "2020-05-17_06:03",
-        post_id: "222",
-      },
-      {
-        user: "user1",
-        message: "Thank you!",
-        dateTime: "2020-05-17_06:24",
-        post_id: "666",
-      },
-      {
-        user: "user3",
-        message: "This store is really great!",
-        dateTime: "2020-05-08_13:28",
-        post_id: "333",
-      },
-      {
-        user: "user4",
-        message: "What kind of laptop should I get?",
-        dateTime: "2020-06-07_15:22",
-        post_id: "444",
-      },
-      {
-        user: "user5",
-        message: "Get the newest Macbook!",
-        dateTime: "2020-06-07_15:37",
-        post_id: "555",
-      },
-    ];
-
-    posts.sort((a, b) => {
-      if (a.dateTime > b.dateTime) return 1;
-      if (a.dateTime < b.dateTime) return -1;
-      return 0;
-    });
-
-    this.setState({ posts: posts });
+        this.setState({ posts });
+        this.scrollPosts();
+      })
+      .catch((error) => {
+        console.log("getPosts", error);
+      });
   };
 
   updateMessage = (event) => {
@@ -84,11 +68,31 @@ export default class Forum extends React.Component {
   };
 
   postMessage = () => {
-    /**
-     * Make API call
-     */
+    const data = {
+      Message: this.state.message,
+      User: this.props.user.username,
+      User_id: {
+        __type: "Pointer",
+        className: "Registered_User",
+        objectId: this.props.user.objectId,
+      },
+      Forum_post_id: (this.state.posts.length + 1).toString(),
+      time_created_updated: "",
+    };
 
-    console.log("postMessage", this.props.user.username, this.state.message);
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .post("https://parseapi.back4app.com/classes/Forum_Post", data)
+      .then((response) => {
+        console.log("postMessage", response.data);
+        this.getPosts();
+      })
+      .catch((error) => {
+        console.log("postMessage", error);
+      });
   };
 
   deletePost = (post_id) => {
@@ -96,14 +100,26 @@ export default class Forum extends React.Component {
      * Make API call
      */
 
-    console.log("deletePost", post_id);
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .delete("https://parseapi.back4app.com/classes/Forum_Post/" + post_id)
+      .then((response) => {
+        console.log("deletePost", response.data);
+        this.getPosts();
+      })
+      .catch((error) => {
+        console.log("deletePost", error);
+      });
   };
 
   render() {
     return (
       <div>
         <div className="pageHeader">Forum</div>
-        <div className={css.posts}>
+        <div className={css.posts} id="forumPostsBox">
           {this.state.posts.map((post) => (
             <div key={post.post_id} className={css.post}>
               <div>
@@ -113,7 +129,7 @@ export default class Forum extends React.Component {
                   <div className={css.deletePostContainer}>
                     <button
                       className="button"
-                      onClick={() => this.deletePost(post.post_id)}
+                      onClick={() => this.deletePost(post.objectId)}
                     >
                       Delete Post
                     </button>
