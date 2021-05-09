@@ -1,6 +1,3 @@
-Make Complaints
-    use api
-
 Database
     homepage
         add product to homepage
@@ -12,3 +9,6 @@ Database
     account
         account balance
     delivery tracking
+    Complaints
+        a registered user can make complaints against manager, clerk, and computer
+        no other complaint relationships exist.

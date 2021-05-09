@@ -8,27 +8,16 @@ Manager user can file a complaint against a registered user or clerk.
 
 import React from "react";
 import css from "./MakeComplaints.module.css";
-
-const userRoleToUserComplain = {
-  visitor: [],
-  registered: ["registered user", "delivery company", "store clerk"],
-  clerk: ["registered user", "delivery company"],
-  manager: ["registered user", "store clerk"],
-};
+import axios from "axios";
 
 export default class MakeComplaints extends React.Component {
   state = {
-    userType: "",
-    username: "",
+    userSelect: "-",
     message: "",
   };
 
-  updateUserType = (event) => {
-    this.setState({ userType: event.target.value });
-  };
-
-  updateUsername = (event) => {
-    this.setState({ username: event.target.value });
+  updateUserSelect = (event) => {
+    this.setState({ userSelect: event.target.value });
   };
 
   updateMessage = (event) => {
@@ -36,18 +25,56 @@ export default class MakeComplaints extends React.Component {
   };
 
   submitComplaint = () => {
-    /**
-     * Make API call
-     */
+    console.log("submitComplaint", this.state.userSelect, this.state.message);
+    if (this.state.message === "" || this.state.userSelect === "-") return;
 
-    console.log(
-      "submitComplaint",
-      this.state.userType,
-      this.state.username,
-      this.state.message
-    );
+    var againstUser = {
+      __type: "Pointer",
+      objectId: this.props.allUsers[this.state.userSelect].objectId,
+    };
 
-    this.setState({ userType: "", username: "", message: "" });
+    var data = {
+      from_against:
+        this.props.allUsers[this.props.currentUserObjectId].role +
+        "_" +
+        this.props.allUsers[this.state.userSelect].role,
+      message: this.state.message,
+      user: {
+        __type: "Pointer",
+        className: "Registered_User",
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
+      },
+    };
+
+    switch (this.props.allUsers[this.state.userSelect].role) {
+      case "clerk":
+        againstUser.className = "Store_Clerk";
+        data.store_clerk = againstUser;
+        break;
+      case "manager":
+        againstUser.className = "Store_Manager";
+        data.manager = againstUser;
+        break;
+      case "computer":
+        againstUser.className = "Computer";
+        data.computer_store = againstUser;
+        break;
+      default:
+        break;
+    }
+
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .post("https://parseapi.back4app.com/classes/Complaints", data)
+      .then((response) => {
+        console.log("submitComplaint", response.data);
+      })
+      .catch((error) => {
+        console.log("submitComplaint", error);
+      });
   };
 
   render() {
@@ -57,30 +84,30 @@ export default class MakeComplaints extends React.Component {
         <div className={css.tableContainer}>
           <table align="center" className={css.table}>
             <tr>
-              <td>Type Of User:</td>
-              <td>
-                <select
-                  value={this.state.userType}
-                  onChange={this.updateUserType}
-                >
-                  {userRoleToUserComplain[
-                    this.props.allUsers[this.props.currentUserObjectId].role
-                  ].map((userRole) => (
-                    <option key={userRole} value={userRole}>
-                      {userRole}
-                    </option>
-                  ))}
-                </select>
-              </td>
-            </tr>
-            <tr>
               <td>Username:</td>
               <td>
-                <input
-                  type="text"
-                  value={this.state.username}
-                  onChange={this.updateUsername}
-                />
+                <select
+                  value={this.state.userSelect}
+                  onChange={this.updateUserSelect}
+                >
+                  <option value="-">-</option>
+                  {Object.keys(this.props.allUsers)
+                    .filter(
+                      (user) =>
+                        user !== "visitor" &&
+                        this.props.allUsers[user].role !== "delivery" &&
+                        this.props.allUsers[user].role !== "registered"
+                    )
+                    .map((user) => (
+                      <option
+                        key={this.props.allUsers[user].objectId}
+                        value={this.props.allUsers[user].objectId}
+                      >
+                        {this.props.allUsers[user].username} -{" "}
+                        {this.props.allUsers[user].role}
+                      </option>
+                    ))}
+                </select>
               </td>
             </tr>
             <tr>

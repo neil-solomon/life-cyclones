@@ -121,7 +121,7 @@ export default class Forum extends React.Component {
         <div className="pageHeader">Forum</div>
         <div className={css.posts} id="forumPostsBox">
           {this.state.posts.map((post) => (
-            <div key={post.post_id} className={css.post}>
+            <div key={post.objectId} className={css.post}>
               <div>
                 <div className={css.postUser}>{post.user}</div>
                 <div className={css.postDateTime}>{post.dateTime}</div>
