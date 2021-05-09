@@ -1,9 +1,5 @@
 Make Complaints
     use api
-View Complaints
-    use api
-App
-    check black list emails for login/signup
 
 Database
     homepage

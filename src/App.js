@@ -22,6 +22,7 @@ export default class App extends React.Component {
         role: "visitor",
       },
     },
+    blackListEmails: new Set(),
     pageView: "Homepage",
     loginVisible: false,
     menuVisible: false,
@@ -30,6 +31,7 @@ export default class App extends React.Component {
 
   componentDidMount = () => {
     this.getAllUsers();
+    this.getBlackListEmails();
   };
 
   getAllUsers = () => {
@@ -38,6 +40,26 @@ export default class App extends React.Component {
     this.getRegistered_Users();
     this.getStore_Clerks();
     this.getStore_Managers();
+  };
+
+  getBlackListEmails = () => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Avoid_Emails")
+      .then((response) => {
+        console.log("getBlackListEmails", response.data.results);
+        var blackListEmails = new Set();
+        for (const result of response.data.results) {
+          blackListEmails.add(result.Email);
+        }
+        this.setState({ blackListEmails });
+      })
+      .catch((error) => {
+        console.log("getBlackListEmails", error);
+      });
   };
 
   getComputers = () => {
@@ -188,6 +210,14 @@ export default class App extends React.Component {
   };
 
   login = (userData) => {
+    if (this.state.blackListEmails.has(userData.email)) {
+      notification.error({
+        message: "Error",
+        description: "Entered email is on blacklist.",
+      });
+      return;
+    }
+
     var goodLogin = false;
 
     for (const user in this.state.allUsers) {
@@ -212,6 +242,14 @@ export default class App extends React.Component {
   };
 
   signUp = (userData) => {
+    if (this.state.blackListEmails.has(userData.email)) {
+      notification.error({
+        message: "Error",
+        description: "Entered email is on blacklist.",
+      });
+      return;
+    }
+
     const data = {
       username: userData.email,
       password: userData.password,
