@@ -61,7 +61,8 @@ export default class Login extends React.Component {
         onCancel={this.props.toggleLoginVisible}
         footer={
           <div>
-            {this.props.user.role === "visitor" && (
+            {this.props.allUsers[this.props.currentUserObjectId].role ===
+              "visitor" && (
               <>
                 <button
                   className="button"
@@ -75,7 +76,8 @@ export default class Login extends React.Component {
                 </button>
               </>
             )}
-            {this.props.user.role !== "visitor" && (
+            {this.props.allUsers[this.props.currentUserObjectId].role !==
+              "visitor" && (
               <>
                 <button className="button" onClick={this.handleLogout}>
                   Logout
@@ -86,7 +88,8 @@ export default class Login extends React.Component {
         }
       >
         <div className={css.container}>
-          {this.props.user.role === "visitor" && (
+          {this.props.allUsers[this.props.currentUserObjectId].role ===
+            "visitor" && (
             <table>
               <tbody>
                 <tr>
@@ -112,10 +115,13 @@ export default class Login extends React.Component {
               </tbody>
             </table>
           )}
-          {this.props.user.role !== "visitor" && (
+          {this.props.allUsers[this.props.currentUserObjectId].role !==
+            "visitor" && (
             <div>
-              Welcome back, {this.props.user.username}! <br /> Your role is{" "}
-              {this.props.user.role}.
+              Welcome back,{" "}
+              {this.props.allUsers[this.props.currentUserObjectId].username}!{" "}
+              <br /> Your role is{" "}
+              {this.props.allUsers[this.props.currentUserObjectId].role}.
             </div>
           )}
         </div>

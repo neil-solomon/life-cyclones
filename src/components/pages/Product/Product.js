@@ -125,7 +125,7 @@ export default class Product extends React.Component {
       user: {
         __type: "Pointer",
         className: "Registered_User",
-        objectId: this.props.user.objectId,
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
       },
     };
 
@@ -173,7 +173,8 @@ export default class Product extends React.Component {
         var validPayment = false;
         for (const purchase of response.data.results) {
           if (
-            purchase.user.objectId === this.props.user.objectId &&
+            purchase.user.objectId ===
+              this.props.allUsers[this.props.currentUserObjectId].objectId &&
             purchase.credit_card_num !== ""
           ) {
             validPayment = true;
@@ -204,7 +205,7 @@ export default class Product extends React.Component {
       user: {
         __type: "Pointer",
         className: "Registered_User",
-        objectId: this.props.user.objectId,
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
       },
     };
 
@@ -248,7 +249,8 @@ export default class Product extends React.Component {
           <StarFilled style={{ color: "rgb(255, 205, 0)" }} />
           {this.state.rating}
         </div>
-        {this.props.user.role === "registered" && (
+        {this.props.allUsers[this.props.currentUserObjectId].role ===
+          "registered" && (
           <div>
             <button className="button" onClick={this.handlePurchase}>
               <div style={{ fontSize: "1.25em" }}>BUY NOW</div>
@@ -260,14 +262,16 @@ export default class Product extends React.Component {
             <div key={comment + index}>"{comment}"</div>
           ))}
         </div>
-        {this.props.user.role === "manager" && (
+        {this.props.allUsers[this.props.currentUserObjectId].role ===
+          "manager" && (
           <div className={css.addToHomepage}>
             <button className="button" onClick={this.addToHomepage}>
               Add To Homepage
             </button>
           </div>
         )}
-        {this.props.user.role === "registered" && (
+        {this.props.allUsers[this.props.currentUserObjectId].role ===
+          "registered" && (
           <div>
             <div className={css.postComment}>
               <textarea

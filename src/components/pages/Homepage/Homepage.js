@@ -96,7 +96,8 @@ export default class Homepage extends React.Component {
       <div>
         <div className="pageHeader">Homepage</div>
         <div className={css.greeting}>
-          Hello {this.props.user.username}!
+          Hello {this.props.allUsers[this.props.currentUserObjectId].username}
+          !
           <br />
           Welcome to Life Cyclones Online Computer Store.
         </div>

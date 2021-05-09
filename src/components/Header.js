@@ -40,7 +40,9 @@ export default class Header extends React.Component {
             onClick={this.props.toggleLoginVisible}
           >
             <UserOutlined className={css.userIcon} />
-            <div className={css.username}>{this.props.user.username}</div>
+            <div className={css.username}>
+              {this.props.allUsers[this.props.currentUserObjectId].username}
+            </div>
           </div>
         </div>
         <div className={css.bottomBorder}></div>

@@ -35,7 +35,10 @@ export default class Account extends React.Component {
       .then((response) => {
         console.log("getUserData", response.data.results);
         for (const purchase of response.data.results) {
-          if (purchase.user.objectId === this.props.user.objectId) {
+          if (
+            purchase.user.objectId ===
+            this.props.allUsers[this.props.currentUserObjectId].objectId
+          ) {
             var userData = _.cloneDeep(this.state.userData);
             userData.creditCard.number = purchase.credit_card_num;
             userData.deliveryAddress.address = purchase.delivery_address;
@@ -114,7 +117,7 @@ export default class Account extends React.Component {
       user: {
         __type: "Pointer",
         className: "Registered_User",
-        objectId: this.props.user.objectId,
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
       },
     };
 

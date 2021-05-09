@@ -79,9 +79,13 @@ export default class Menu extends React.Component {
           className={css.container}
           style={{ left: this.props.menuVisible ? 0 : -305 }}
         >
-          {roleToPages[this.props.user.role] && (
+          {roleToPages[
+            this.props.allUsers[this.props.currentUserObjectId].role
+          ] && (
             <>
-              {roleToPages[this.props.user.role].map((page, index) => (
+              {roleToPages[
+                this.props.allUsers[this.props.currentUserObjectId].role
+              ].map((page, index) => (
                 <div
                   key={page + this.props.menuVisible}
                   onClick={() => this.props.updatePageView(page)}
@@ -100,12 +104,19 @@ export default class Menu extends React.Component {
                   animationDelay:
                     (
                       0.1 *
-                      (roleToPages[this.props.user.role].length + 3)
+                      (roleToPages[
+                        this.props.allUsers[this.props.currentUserObjectId].role
+                      ].length +
+                        3)
                     ).toString() + "s",
                   marginTop:
                     window.innerHeight +
                     35 -
-                    50 * (roleToPages[this.props.user.role].length + 3),
+                    50 *
+                      (roleToPages[
+                        this.props.allUsers[this.props.currentUserObjectId].role
+                      ].length +
+                        3),
                 }}
               >
                 <div>&copy; Life Cyclones 2021</div>

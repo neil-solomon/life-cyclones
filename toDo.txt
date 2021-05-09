@@ -1,0 +1,18 @@
+Make Complaints
+    use api
+View Complaints
+    use api
+App
+    check black list emails for login/signup
+
+Database
+    homepage
+        add product to homepage
+        top selling products
+    product
+        add product to homepage
+    delivery auction
+        select a bid for a purchase
+    account
+        account balance
+    delivery tracking

@@ -70,11 +70,11 @@ export default class Forum extends React.Component {
   postMessage = () => {
     const data = {
       Message: this.state.message,
-      User: this.props.user.username,
+      User: this.props.allUsers[this.props.currentUserObjectId].username,
       User_id: {
         __type: "Pointer",
         className: "Registered_User",
-        objectId: this.props.user.objectId,
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
       },
       Forum_post_id: (this.state.posts.length + 1).toString(),
       time_created_updated: "",
@@ -125,7 +125,8 @@ export default class Forum extends React.Component {
               <div>
                 <div className={css.postUser}>{post.user}</div>
                 <div className={css.postDateTime}>{post.dateTime}</div>
-                {this.props.user.role === "manager" && (
+                {this.props.allUsers[this.props.currentUserObjectId].role ===
+                  "manager" && (
                   <div className={css.deletePostContainer}>
                     <button
                       className="button"
@@ -140,9 +141,12 @@ export default class Forum extends React.Component {
             </div>
           ))}
         </div>
-        {(this.props.user.role === "registered" ||
-          this.props.user.role === "manager" ||
-          this.props.user.role === "clerk") && (
+        {(this.props.allUsers[this.props.currentUserObjectId].role ===
+          "registered" ||
+          this.props.allUsers[this.props.currentUserObjectId].role ===
+            "manager" ||
+          this.props.allUsers[this.props.currentUserObjectId].role ===
+            "clerk") && (
           <div className={css.postMessage}>
             <textarea
               rows={3}

@@ -11,17 +11,16 @@ import { notification } from "antd";
 
 export default class App extends React.Component {
   state = {
-    user: {
-      username: "visitor",
-      userId: "",
-      role: "visitor",
-    },
-    users: {
-      computer: {},
-      delivery: {},
-      registered_user: {},
-      store_clerk: {},
-      store_manager: {},
+    currentUserObjectId: "visitor",
+    allUsers: {
+      visitor: {
+        username: "visitor",
+        objectId: "",
+        password: "",
+        numWarnings: "",
+        email: "",
+        role: "visitor",
+      },
     },
     pageView: "Homepage",
     loginVisible: false,
@@ -50,18 +49,18 @@ export default class App extends React.Component {
       .get("https://parseapi.back4app.com/classes/Computer")
       .then((response) => {
         console.log("getComputers", response.data.results);
-        var computers = {};
+        var allUsers = _.cloneDeep(this.state.allUsers);
         for (const user of response.data.results) {
-          computers[user.cCompany_Email] = {
+          allUsers[user.objectId] = {
             username: user.name,
             objectId: user.objectId,
             password: user.password,
             numWarnings: user.warnings,
+            email: user.cCompany_Email,
+            role: "computer",
           };
         }
-        var users = _.cloneDeep(this.state.users);
-        users.computer = computers;
-        this.setState({ users });
+        this.setState({ allUsers });
       })
       .catch((error) => {
         console.log("getComputers", error);
@@ -77,19 +76,19 @@ export default class App extends React.Component {
       .get("https://parseapi.back4app.com/classes/Delivery")
       .then((response) => {
         console.log("getDeliverys", response.data.results);
-        var deliverys = {};
+        var allUsers = _.cloneDeep(this.state.allUsers);
         for (const user of response.data.results) {
-          deliverys[user.dc_email] = {
+          allUsers[user.objectId] = {
             tracking_id: user.tracking_id,
             username: user.dc_email,
             objectId: user.objectId,
             password: user.password,
             numWarnings: user.warnings,
+            email: user.dc_email,
+            role: "delivery",
           };
         }
-        var users = _.cloneDeep(this.state.users);
-        users.delivery = deliverys;
-        this.setState({ users });
+        this.setState({ allUsers });
       })
       .catch((error) => {
         console.log("getDeliverys", error);
@@ -105,18 +104,18 @@ export default class App extends React.Component {
       .get("https://parseapi.back4app.com/classes/Registered_User")
       .then((response) => {
         console.log("getRegistered_Users", response.data.results);
-        var registereds = {};
+        var allUsers = _.cloneDeep(this.state.allUsers);
         for (const user of response.data.results) {
-          registereds[user.email] = {
+          allUsers[user.objectId] = {
             username: user.username,
             objectId: user.objectId,
             password: user.password,
             numWarnings: user.num_of_warnings,
+            email: user.email,
+            role: "registered",
           };
         }
-        var users = _.cloneDeep(this.state.users);
-        users.registered_user = registereds;
-        this.setState({ users });
+        this.setState({ allUsers });
       })
       .catch((error) => {
         console.log("getRegistered_Users", error);
@@ -132,18 +131,18 @@ export default class App extends React.Component {
       .get("https://parseapi.back4app.com/classes/Store_Clerk")
       .then((response) => {
         console.log("getStore_Clerks", response.data.results);
-        var clerks = {};
+        var allUsers = _.cloneDeep(this.state.allUsers);
         for (const user of response.data.results) {
-          clerks[user.sc_email] = {
+          allUsers[user.objectId] = {
             username: user.name,
             objectId: user.objectId,
             password: user.password,
             numWarnings: 0,
+            email: user.sc_email,
+            role: "clerk",
           };
         }
-        var users = _.cloneDeep(this.state.users);
-        users.store_clerk = clerks;
-        this.setState({ users });
+        this.setState({ allUsers });
       })
       .catch((error) => {
         console.log("getStore_Clerks", error);
@@ -159,18 +158,18 @@ export default class App extends React.Component {
       .get("https://parseapi.back4app.com/classes/Store_Manager")
       .then((response) => {
         console.log("getStore_Managers", response.data.results);
-        var managers = {};
+        var allUsers = _.cloneDeep(this.state.allUsers);
         for (const user of response.data.results) {
-          managers[user.sm_email] = {
+          allUsers[user.objectId] = {
             username: user.name,
             objectId: user.objectId,
             password: user.password,
             numWarnings: 0,
+            email: user.sm_email,
+            role: "manager",
           };
         }
-        var users = _.cloneDeep(this.state.users);
-        users.store_manager = managers;
-        this.setState({ users });
+        this.setState({ allUsers });
       })
       .catch((error) => {
         console.log("getStore_Managers", error);
@@ -190,62 +189,26 @@ export default class App extends React.Component {
 
   login = (userData) => {
     var goodLogin = false;
-    var role = "visitor";
-    var user;
 
-    if (
-      this.state.users.delivery[userData.email] &&
-      this.state.users.delivery[userData.email].password === userData.password
-    ) {
-      user = _.cloneDeep(this.state.users.delivery[userData.email]);
-      user.role = "delivery";
-      user.email = userData.email;
-      this.setState({ user });
-    } else if (
-      this.state.users.computer[userData.email] &&
-      this.state.users.computer[userData.email].password === userData.password
-    ) {
-      user = _.cloneDeep(this.state.users.computer[userData.email]);
-      user.role = "computer";
-      user.email = userData.email;
-      this.setState({ user });
-    } else if (
-      this.state.users.registered_user[userData.email] &&
-      this.state.users.registered_user[userData.email].password ===
-        userData.password
-    ) {
-      user = _.cloneDeep(this.state.users.registered_user[userData.email]);
-      user.role = "registered";
-      user.email = userData.email;
-      this.setState({ user });
-    } else if (
-      this.state.users.store_clerk[userData.email] &&
-      this.state.users.store_clerk[userData.email].password ===
-        userData.password
-    ) {
-      user = _.cloneDeep(this.state.users.store_clerk[userData.email]);
-      user.role = "clerk";
-      user.email = userData.email;
-      this.setState({ user });
-    } else if (
-      this.state.users.store_manager[userData.email] &&
-      this.state.users.store_manager[userData.email].password ===
-        userData.password
-    ) {
-      user = _.cloneDeep(this.state.users.store_manager[userData.email]);
-      user.role = "manager";
-      user.email = userData.email;
-      this.setState({
-        user,
-      });
-    } else {
+    for (const user in this.state.allUsers) {
+      if (
+        this.state.allUsers[user].email === userData.email &&
+        this.state.allUsers[user].password === userData.password
+      ) {
+        goodLogin = true;
+        this.setState({
+          currentUserObjectId: this.state.allUsers[user].objectId,
+        });
+        break;
+      }
+    }
+
+    if (!goodLogin) {
       notification.error({
         message: "Error",
         description: "Incorrect email or password.",
       });
     }
-
-    console.log("login", userData);
   };
 
   signUp = (userData) => {
@@ -276,11 +239,7 @@ export default class App extends React.Component {
 
   logout = () => {
     this.setState({
-      user: {
-        username: "visitor",
-        userId: "",
-        role: "visitor",
-      },
+      currentUserObjectId: "visitor",
       pageView: "Homepage",
     });
   };
@@ -301,7 +260,8 @@ export default class App extends React.Component {
           toggleLoginVisible={this.toggleLoginVisible}
           toggleMenuVisible={this.toggleMenuVisible}
           updatePageView={this.updatePageView}
-          user={this.state.user}
+          allUsers={this.state.allUsers}
+          currentUserObjectId={this.state.currentUserObjectId}
         />
         <Login
           loginVisible={this.state.loginVisible}
@@ -309,12 +269,14 @@ export default class App extends React.Component {
           login={this.login}
           logout={this.logout}
           signUp={this.signUp}
-          user={this.state.user}
+          allUsers={this.state.allUsers}
+          currentUserObjectId={this.state.currentUserObjectId}
         />
         <Menu
           menuVisible={this.state.menuVisible}
           toggleMenuVisible={this.toggleMenuVisible}
-          user={this.state.user}
+          allUsers={this.state.allUsers}
+          currentUserObjectId={this.state.currentUserObjectId}
           updatePageView={this.updatePageView}
         />
         <Content
@@ -324,6 +286,8 @@ export default class App extends React.Component {
           toggleMenuVisible={this.toggleMenuVisible}
           goToProductPage={this.goToProductPage}
           productPage_product_id={this.state.productPage_product_id}
+          allUsers={this.state.allUsers}
+          currentUserObjectId={this.state.currentUserObjectId}
         />
       </div>
     );

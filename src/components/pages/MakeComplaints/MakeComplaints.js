@@ -63,13 +63,13 @@ export default class MakeComplaints extends React.Component {
                   value={this.state.userType}
                   onChange={this.updateUserType}
                 >
-                  {userRoleToUserComplain[this.props.user.role].map(
-                    (userRole) => (
-                      <option key={userRole} value={userRole}>
-                        {userRole}
-                      </option>
-                    )
-                  )}
+                  {userRoleToUserComplain[
+                    this.props.allUsers[this.props.currentUserObjectId].role
+                  ].map((userRole) => (
+                    <option key={userRole} value={userRole}>
+                      {userRole}
+                    </option>
+                  ))}
                 </select>
               </td>
             </tr>

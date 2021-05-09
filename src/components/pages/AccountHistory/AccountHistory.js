@@ -44,7 +44,10 @@ export default class AccountHistory extends React.Component {
         console.log("getPurchases", response.data.results);
         var purchases = [];
         for (const purchase of response.data.results) {
-          if (purchase.user.objectId === this.props.user.objectId) {
+          if (
+            purchase.user.objectId ===
+            this.props.allUsers[this.props.currentUserObjectId].objectId
+          ) {
             purchases.push({
               productObjectId: purchase.product.objectId,
               dateTime: purchase.createdAt,
@@ -74,7 +77,10 @@ export default class AccountHistory extends React.Component {
         console.log("getProductReviews", response.data.results);
         var productReviews = [];
         for (const review of response.data.results) {
-          if (review.user.objectId === this.props.user.objectId) {
+          if (
+            review.user.objectId ===
+            this.props.allUsers[this.props.currentUserObjectId].objectId
+          ) {
             productReviews.push({
               productObjectId: review.product.objectId,
               dateTime: review.updatedAt,
@@ -106,7 +112,10 @@ export default class AccountHistory extends React.Component {
         console.log("getComplaints", response.data.results);
         var complaints = [];
         for (const complaint of response.data.results) {
-          if (complaint.user.objectId === this.props.user.objectId) {
+          if (
+            complaint.user.objectId ===
+            this.props.allUsers[this.props.currentUserObjectId].objectId
+          ) {
             complaints.push({
               dateTime: complaint.updatedAt,
               message: complaint.message,
@@ -114,15 +123,19 @@ export default class AccountHistory extends React.Component {
             switch (complaint.from_against.split("_")[1]) {
               case "manager":
                 complaints[complaints.length - 1].against =
-                  "manager - " + complaint.manager.objectId;
+                  "manager - " +
+                  this.props.allUsers[complaint.manager.objectId].username;
                 break;
               case "storeClerk":
                 complaints[complaints.length - 1].against =
-                  "store clerk - " + complaint.store_clerk.objectId;
+                  "store clerk - " +
+                  this.props.allUsers[complaint.store_clerk.objectId].username;
                 break;
               case "computerStore":
                 complaints[complaints.length - 1].against =
-                  "computer store - " + complaint.computer_store.objectId;
+                  "computer store - " +
+                  this.props.allUsers[complaint.computer_store.objectId]
+                    .username;
                 break;
               default:
                 break;
@@ -142,66 +155,6 @@ export default class AccountHistory extends React.Component {
       .catch((error) => {
         console.log("getComplaints", error);
       });
-  };
-
-  getUserData = () => {
-    /**
-     * Make API call
-     */
-    const userData = {
-      purchases: [
-        {
-          product_id: "111",
-          dateTime: "2020-04-29_07:15",
-        },
-        {
-          product_id: "222",
-          dateTime: "2020-05-19_17:27",
-        },
-      ],
-      productComments: [
-        {
-          product_id: "111",
-          dateTime: "2020-04-30_07:15",
-          message: "This product is great!",
-        },
-      ],
-      productRatings: [
-        {
-          product_id: "111",
-          dateTime: "2020-04-30_07:15",
-          rating: 4,
-        },
-        {
-          product_id: "222",
-          dateTime: "2020-05-20_07:15",
-          rating: 2,
-        },
-      ],
-      productComplaints: [
-        {
-          product_id: "222",
-          dateTime: "2020-05-20_07:15",
-          message: "It's not fast enough.",
-        },
-      ],
-      deliveryComplaints: [
-        {
-          deliveryCompany: "PC Delivery Inc",
-          dateTime: "2020-05-20_06:15",
-          message: "The driver kicked my dog when he dropped off my package.",
-        },
-      ],
-      clerkComplaints: [
-        {
-          clerk: "userClerk1",
-          dateTime: "2020-04-29_08:15",
-          message: "The clerk told me the wrong price for the product.",
-        },
-      ],
-    };
-
-    this.setState({ userData: userData });
   };
 
   render() {

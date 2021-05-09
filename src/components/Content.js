@@ -64,52 +64,95 @@ export default class Content extends React.Component {
     var content;
     switch (this.state.pageView) {
       case "Account":
-        content = <Account user={this.props.user} />;
+        content = (
+          <Account
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Account History":
-        content = <AccountHistory user={this.props.user} />;
+        content = (
+          <AccountHistory
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "All Products":
         content = (
           <AllProducts
-            user={this.props.user}
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
             goToProductPage={this.props.goToProductPage}
           />
         );
         break;
       case "Blacklist":
-        content = <Blacklist user={this.props.user} />;
+        content = (
+          <Blacklist
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Delivery Auction":
-        content = <DeliveryAuction user={this.props.user} />;
+        content = (
+          <DeliveryAuction
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Delivery Tracking":
-        content = <DeliveryTracking user={this.props.user} />;
+        content = (
+          <DeliveryTracking
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Forum":
-        content = <Forum user={this.props.user} />;
+        content = (
+          <Forum
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Homepage":
         content = (
           <Homepage
-            user={this.props.user}
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
             goToProductPage={this.props.goToProductPage}
           />
         );
         break;
       case "Make Complaints":
-        content = <MakeComplaints user={this.props.user} />;
+        content = (
+          <MakeComplaints
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       case "Product":
         content = (
           <Product
-            user={this.props.user}
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
             product_id={this.props.productPage_product_id}
           />
         );
         break;
       case "View Complaints":
-        content = <ViewComplaints user={this.props.user} />;
+        content = (
+          <ViewComplaints
+            allUsers={this.props.allUsers}
+            currentUserObjectId={this.props.currentUserObjectId}
+          />
+        );
         break;
       default:
         content = "ERROR: Content.js can't find the proper page.";
