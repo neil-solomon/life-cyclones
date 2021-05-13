@@ -1,14 +1,7 @@
 Database
-    homepage
-        add product to homepage
-        top selling products
-    product
-        add product to homepage
-    delivery auction
-        select a bid for a purchase
-    account
-        account balance
-    delivery tracking
     Complaints
         a registered user can make complaints against manager, clerk, and computer
         no other complaint relationships exist.
+
+auto blacklist user after manager makes 3 complaints
+add num warnings column to manager's view complaints

@@ -7,6 +7,8 @@ they are in charge of delivering.
 
 import React from "react";
 import css from "./DeliveryTracking.module.css";
+import axios from "axios";
+import _ from "lodash";
 
 export default class DeliveryTracking extends React.Component {
   state = {
@@ -18,49 +20,50 @@ export default class DeliveryTracking extends React.Component {
   };
 
   getPurchases = () => {
-    /**
-     * Make API call
-     * Get the purchases which the current delivery user is responsible for
-     */
-
-    const purchases = [
-      {
-        purchase_id: "1234",
-        deliveryStatus: "in the warehouse",
-      },
-      {
-        purchase_id: "1111",
-        deliveryStatus: "out for delivery",
-      },
-      {
-        purchase_id: "4321",
-        deliveryStatus: "5 stops away",
-      },
-      {
-        purchase_id: "3333",
-        deliveryStatus: "delivered",
-      },
-    ];
-
-    this.setState({ purchases: purchases });
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Purchase")
+      .then((response) => {
+        console.log("getPurchases", response.data.results);
+        const purchases = response.data.results.filter((purchase) => {
+          return typeof purchase.delivery !== "undefined";
+        });
+        this.setState({ purchases });
+      })
+      .catch((error) => {
+        console.log("getPurchases", error);
+      });
   };
 
-  updateDeliveryStatus = (purchase_id, purchaseIndex) => {
-    /**
-     * Make API call
-     */
-
+  updateDeliveryStatus = (purchaseObjecId, purchaseIndex) => {
     var inputElement = document.getElementById(
       "updateDeliveryStatusInput_" + purchaseIndex
     );
-    if (!inputElement) return;
+    if (!inputElement || inputElement.value === "") return;
 
-    console.log(
-      "updateDeliveryStatus",
-      purchase_id,
-      purchaseIndex,
-      inputElement.value
-    );
+    const data = {
+      tracking_info: inputElement.value,
+    };
+
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .put(
+        "https://parseapi.back4app.com/classes/Purchase/" + purchaseObjecId,
+        data
+      )
+      .then((response) => {
+        console.log("updateDeliveryStatus", response.data.results);
+        this.getPurchases();
+      })
+      .catch((error) => {
+        console.log("updateDeliveryStatus", error);
+      });
   };
 
   render() {
@@ -82,9 +85,9 @@ export default class DeliveryTracking extends React.Component {
                 </td>
               </tr>
               {this.state.purchases.map((purchase, index) => (
-                <tr key={purchase.purchase_id}>
-                  <td>{purchase.purchase_id}</td>
-                  <td>{purchase.deliveryStatus}</td>
+                <tr key={purchase.objectId}>
+                  <td>{purchase.objectId}</td>
+                  <td>{purchase.tracking_info}</td>
                   <td>
                     <input
                       type="text"
@@ -94,7 +97,7 @@ export default class DeliveryTracking extends React.Component {
                     <button
                       className="button"
                       onClick={() =>
-                        this.updateDeliveryStatus(purchase.purchase_id, index)
+                        this.updateDeliveryStatus(purchase.objectId, index)
                       }
                     >
                       Update

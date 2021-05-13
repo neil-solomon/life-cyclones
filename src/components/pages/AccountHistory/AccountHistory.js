@@ -51,6 +51,7 @@ export default class AccountHistory extends React.Component {
             purchases.push({
               productObjectId: purchase.product.objectId,
               dateTime: purchase.createdAt,
+              trackingInfo: purchase.tracking_info,
             });
           }
         }
@@ -184,7 +185,7 @@ export default class AccountHistory extends React.Component {
                             {Object.keys(userDataEntryElement).map(
                               (userDataEntryElementKey) => (
                                 <div key={userDataEntryElementKey}>
-                                  {userDataEntryElementKey}:{" "}
+                                  <strong>{userDataEntryElementKey}: </strong>
                                   {
                                     userDataEntryElement[
                                       userDataEntryElementKey

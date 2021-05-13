@@ -13,6 +13,7 @@ import css from "./Product.module.css";
 import { StarOutlined, StarFilled } from "@ant-design/icons";
 import { notification } from "antd";
 import axios from "axios";
+import _ from "lodash";
 
 export default class Product extends React.Component {
   constructor(props) {
@@ -48,8 +49,10 @@ export default class Product extends React.Component {
       .then((response) => {
         console.log("getProduct", response.data.results);
         var product = {
-          name: response.data.results[0].product_description,
+          name: response.data.results[0].product_name,
+          description: response.data.results[0].product_description,
           price: response.data.results[0].price,
+          objectId: response.data.results[0].objectId,
           imageSrc: response.data.results[0].Image.url,
         };
         this.setState({ product });
@@ -145,16 +148,39 @@ export default class Product extends React.Component {
   };
 
   addToHomepage = () => {
-    /**
-     * Make API call
-     */
-    console.log("addToHomepage", this.props.product_id);
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/manager_select")
+      .then((response) => {
+        console.log("addToHomepage get", response.data.results);
+        var manager_select = _.cloneDeep(response.data.results[0]);
+        manager_select.product_three.objectId = this.state.product.objectId;
+        delete manager_select.createdAt;
+        delete manager_select.updatedAt;
+        delete manager_select.ACL;
+        console.log(JSON.stringify(manager_select));
+        axios
+          .put(
+            "https://parseapi.back4app.com/classes/manager_select/" +
+              manager_select.objectId,
+            manager_select
+          )
+          .then((response) => {
+            console.log("addToHomepage post", response.data.results);
+          })
+          .catch((error) => {
+            console.log("addToHomepage post", error);
+          });
+      })
+      .catch((error) => {
+        console.log("addToHomepage get", error);
+      });
   };
 
   updateRating = (rating) => {
-    /**
-     * Make API call
-     */
     this.setState({ enteredRating: rating });
   };
 
@@ -175,7 +201,9 @@ export default class Product extends React.Component {
           if (
             purchase.user.objectId ===
               this.props.allUsers[this.props.currentUserObjectId].objectId &&
-            purchase.credit_card_num !== ""
+            (purchase.credit_card_num !== "" ||
+              parseFloat(purchase.balance) >=
+                parseFloat(this.state.product.price))
           ) {
             validPayment = true;
             break;
@@ -243,6 +271,7 @@ export default class Product extends React.Component {
           <img src={this.state.product.imageSrc} className={css.image} />
         </div>
         <div className={css.name}>{this.state.product.name}</div>
+        <div>{this.state.product.description}</div>
         <div>Seller: {this.state.company}</div>
         <div className={css.price}>${this.state.product.price}</div>
         <div>

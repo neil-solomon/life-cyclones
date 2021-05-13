@@ -34,17 +34,20 @@ export default class Account extends React.Component {
       .get("https://parseapi.back4app.com/classes/Payment")
       .then((response) => {
         console.log("getUserData", response.data.results);
-        for (const purchase of response.data.results) {
+        for (const payment of response.data.results) {
           if (
-            purchase.user.objectId ===
+            payment.user.objectId ===
             this.props.allUsers[this.props.currentUserObjectId].objectId
           ) {
             var userData = _.cloneDeep(this.state.userData);
-            userData.creditCard.number = purchase.credit_card_num;
-            userData.deliveryAddress.address = purchase.delivery_address;
-            userData.name.firstName = purchase.first_name;
-            userData.name.lastName = purchase.last_name;
-            this.setState({ userData, userPaymentObjectId: purchase.objectId });
+            userData.creditCard.number = payment.credit_card_num;
+            userData.deliveryAddress.address = payment.delivery_address;
+            userData.name.firstName = payment.first_name;
+            userData.name.lastName = payment.last_name;
+            userData.accountBalance = isNaN(parseFloat(payment.balance))
+              ? 0
+              : payment.balance;
+            this.setState({ userData, userPaymentObjectId: payment.objectId });
             break;
           }
         }
@@ -97,14 +100,55 @@ export default class Account extends React.Component {
   };
 
   updateDepositAmount = (event) => {
-    this.setState({ depositAmount: event.target.value });
+    this.setState({ depositAmount: parseInt(event.target.value) });
   };
 
   depositToAccount = () => {
-    /**
-     * Make API call
-     */
-    console.log("deopsitToAccount", this.state.depositAmount);
+    const data = {
+      delivery_address: this.state.userData.deliveryAddress.address,
+      credit_card_num: this.state.userData.creditCard.number,
+      first_name: this.state.userData.name.firstName,
+      last_name: this.state.userData.name.lastName,
+      balance: this.state.userData.accountBalance + this.state.depositAmount,
+      user: {
+        __type: "Pointer",
+        className: "Registered_User",
+        objectId: this.props.allUsers[this.props.currentUserObjectId].objectId,
+      },
+    };
+
+    console.log(JSON.stringify(data));
+
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    if (this.state.userPaymentObjectId === "") {
+      axios
+        .post("https://parseapi.back4app.com/classes/Payment", data)
+        .then((response) => {
+          console.log("depositToAccount post", response.data);
+          this.getUserData();
+        })
+        .catch((error) => {
+          console.log("depositToAccount post", error);
+        });
+    } else {
+      axios
+        .put(
+          "https://parseapi.back4app.com/classes/Payment/" +
+            this.state.userPaymentObjectId,
+          data
+        )
+        .then((response) => {
+          console.log("depositToAccount put", response.data);
+          this.getUserData();
+        })
+        .catch((error) => {
+          console.log("depositToAccount put", error);
+        });
+    }
+
     this.setState({ depositAmount: 0 });
   };
 
@@ -114,6 +158,7 @@ export default class Account extends React.Component {
       credit_card_num: this.state.userData.creditCard.number,
       first_name: this.state.userData.name.firstName,
       last_name: this.state.userData.name.lastName,
+      balance: this.state.accountBalance,
       user: {
         __type: "Pointer",
         className: "Registered_User",

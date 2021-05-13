@@ -14,11 +14,33 @@ export default class Homepage extends React.Component {
   state = {
     bestSelling: [],
     managersPicks: [],
+    companyIdToCompanyName: {},
   };
 
   componentDidMount = () => {
     this.getBestSelling();
     this.getManagersPicks();
+    this.getCompanys();
+  };
+
+  getCompanys = () => {
+    axios.defaults.headers = {
+      "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+      "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+    };
+    axios
+      .get("https://parseapi.back4app.com/classes/Computer")
+      .then((response) => {
+        console.log("getCompanys", response.data.results);
+        var companyIdToCompanyName = {};
+        for (const company of response.data.results) {
+          companyIdToCompanyName[company.objectId] = company.name;
+        }
+        this.setState({ companyIdToCompanyName });
+      })
+      .catch((error) => {
+        console.log("getCompanys", error);
+      });
   };
 
   getBestSelling = () => {
@@ -29,7 +51,7 @@ export default class Homepage extends React.Component {
     axios
       .get("https://parseapi.back4app.com/classes/Products")
       .then((response) => {
-        console.log("getProducts", response.data.results);
+        console.log("getBestSelling", response.data.results);
         var products = [];
         for (const product of response.data.results) {
           products.push({
@@ -39,9 +61,18 @@ export default class Homepage extends React.Component {
             companyObjectId: product.computer_company.objectId,
             company: "",
             name: product.product_name,
+            description: product.product_description,
             imageSrc: product.Image.url,
+            sales: product.sales,
           });
         }
+
+        products.sort((a, b) => {
+          if (a.sales > b.sales) {
+            return -1;
+          }
+          return 1;
+        });
 
         const bestSelling = [
           _.cloneDeep(products[0]),
@@ -52,7 +83,7 @@ export default class Homepage extends React.Component {
         this.setState({ bestSelling: bestSelling });
       })
       .catch((error) => {
-        console.log("getProducts", error);
+        console.log("getBestSelling", error);
       });
   };
 
@@ -62,32 +93,48 @@ export default class Homepage extends React.Component {
       "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
     };
     axios
-      .get("https://parseapi.back4app.com/classes/Products")
+      .get("https://parseapi.back4app.com/classes/manager_select")
       .then((response) => {
-        console.log("getProducts", response.data.results);
-        var products = [];
-        for (const product of response.data.results) {
-          products.push({
-            product_id: product.product_id,
-            object_id: product.objectId,
-            price: product.price,
-            companyObjectId: product.computer_company.objectId,
-            company: "",
-            name: product.product_name,
-            imageSrc: product.Image.url,
-          });
-        }
-
-        const managersPicks = [
-          _.cloneDeep(products[1]),
-          _.cloneDeep(products[2]),
-          _.cloneDeep(products[3]),
+        console.log("getManagersPicks", response.data.results);
+        var selectedProducts = [
+          response.data.results[0].product_one.objectId,
+          response.data.results[0].product_two.objectId,
+          response.data.results[0].product_three.objectId,
         ];
 
-        this.setState({ managersPicks: managersPicks });
+        for (const product of selectedProducts) {
+          axios.defaults.headers = {
+            "X-Parse-Application-Id": process.env.REACT_APP_API_ID,
+            "X-Parse-REST-API-Key": process.env.REACT_APP_API_KEY,
+          };
+          axios
+            .get("https://parseapi.back4app.com/classes/Products", {
+              params: { where: { objectId: product } },
+            })
+            .then((response) => {
+              console.log("getManagersPicks ", product, response.data.results);
+              var managersPicks = _.cloneDeep(this.state.managersPicks);
+              managersPicks.push({
+                product_id: response.data.results[0].product_id,
+                object_id: response.data.results[0].objectId,
+                price: response.data.results[0].price,
+                companyObjectId:
+                  response.data.results[0].computer_company.objectId,
+                company: "",
+                name: response.data.results[0].product_name,
+                description: response.data.results[0].product_description,
+                imageSrc: response.data.results[0].Image.url,
+                sales: response.data.results[0].sales,
+              });
+              this.setState({ managersPicks });
+            })
+            .catch((error) => {
+              console.log("getManagersPicks", product, error);
+            });
+        }
       })
       .catch((error) => {
-        console.log("getProducts", error);
+        console.log("getManagersPicks", error);
       });
   };
 
