@@ -167,7 +167,6 @@ export default class DeliveryAuction extends React.Component {
   };
 
   render() {
-    console.log(this.state.purchases);
     return (
       <div>
         <div className="pageHeader">Delivery Auction</div>
@@ -201,6 +200,11 @@ export default class DeliveryAuction extends React.Component {
                           purchase.purchaseObjectId +
                           bid.deliveryCompany +
                           bid.amount
+                        }
+                        className={
+                          purchase.deliverySelected === bid.deliveryCompany
+                            ? css.selectedBid
+                            : css.bid
                         }
                       >
                         <span className={css.bidAmount}>${bid.price}</span>

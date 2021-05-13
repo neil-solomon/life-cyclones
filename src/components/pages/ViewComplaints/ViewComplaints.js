@@ -32,17 +32,14 @@ export default class ViewComplaints extends React.Component {
         var complaints = [];
         for (const complaint of response.data.results) {
           if (
-            complaint?.manager?.objectId ===
-              this.props.allUsers[this.props.currentUserObjectId].objectId ||
-            complaint?.store_clerk?.objectId ===
-              this.props.allUsers[this.props.currentUserObjectId].objectId ||
-            complaint?.computer_store?.objectId ===
-              this.props.allUsers[this.props.currentUserObjectId].objectId
+            complaint.from_against.split("_")[1] ===
+            this.props.allUsers[this.props.currentUserObjectId].role
           ) {
             complaints.push({
               objectId: complaint.objectId,
               dateTime: complaint.updatedAt,
-              userWhoMadeComplaint: complaint.user.objectId,
+              userWhoMadeComplaint:
+                complaint[complaint.from_against.split("_")[0]].objectId,
               message: complaint.message,
             });
           }
@@ -65,6 +62,9 @@ export default class ViewComplaints extends React.Component {
                 <strong>User Who Made Complaint</strong>
               </td>
               <td>
+                <strong>Date &amp; Time</strong>
+              </td>
+              <td>
                 <strong>Complaint Message</strong>
               </td>
             </tr>
@@ -72,7 +72,10 @@ export default class ViewComplaints extends React.Component {
               <tr key={index}>
                 <td>
                   {this.props.allUsers[complaint.userWhoMadeComplaint].username}
+                  {" - "}
+                  {this.props.allUsers[complaint.userWhoMadeComplaint].role}
                 </td>
+                <td>{complaint.dateTime}</td>
                 <td>{complaint.message}</td>
               </tr>
             ))}

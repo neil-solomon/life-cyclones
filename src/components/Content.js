@@ -93,6 +93,7 @@ export default class Content extends React.Component {
           <Blacklist
             allUsers={this.props.allUsers}
             currentUserObjectId={this.props.currentUserObjectId}
+            getBlackListEmails={this.props.getBlackListEmails}
           />
         );
         break;
@@ -134,6 +135,8 @@ export default class Content extends React.Component {
           <MakeComplaints
             allUsers={this.props.allUsers}
             currentUserObjectId={this.props.currentUserObjectId}
+            getAllUsers={this.props.getAllUsers}
+            getBlackListEmails={this.props.getBlackListEmails}
           />
         );
         break;

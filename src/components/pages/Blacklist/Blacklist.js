@@ -53,6 +53,7 @@ export default class Blacklist extends React.Component {
       .then((response) => {
         console.log("removeFromBlacklist", response.data);
         this.getBlackList();
+        this.props.getBlackListEmails();
       })
       .catch((error) => {
         console.log("removeFromBlacklist", error);
@@ -83,6 +84,7 @@ export default class Blacklist extends React.Component {
         console.log("addToBlackList", response.data);
         this.setState({ email: "", reason: "" });
         this.getBlackList();
+        this.props.getBlackListEmails();
       })
       .catch((error) => {
         console.log("addToBlackList", error);

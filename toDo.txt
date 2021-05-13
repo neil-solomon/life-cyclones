@@ -1,7 +1,2 @@
-Database
-    Complaints
-        a registered user can make complaints against manager, clerk, and computer
-        no other complaint relationships exist.
-
-auto blacklist user after manager makes 3 complaints
-add num warnings column to manager's view complaints
+View Complaints
+    update getComplaints for new Database

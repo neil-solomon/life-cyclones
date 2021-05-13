@@ -326,6 +326,8 @@ export default class App extends React.Component {
           productPage_product_id={this.state.productPage_product_id}
           allUsers={this.state.allUsers}
           currentUserObjectId={this.state.currentUserObjectId}
+          getAllUsers={this.getAllUsers}
+          getBlackListEmails={this.getBlackListEmails}
         />
       </div>
     );

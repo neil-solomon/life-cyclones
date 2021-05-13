@@ -17,3 +17,13 @@
 .bidAmount {
   color: rgb(124, 77, 255);
 }
+
+.bid {
+  padding: 5px;
+}
+
+.selectedBid {
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid rgb(124, 77, 255);
+}
